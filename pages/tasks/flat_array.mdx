@@ -1,0 +1,31 @@
+Как из `[[1], [[2, 3]], [[[4]]]]` -> `[1, 2, 3, 4]` сделать?
+
+Можно вот так:
+
+```javascript
+function flattenArray(arr) {
+  return arr.reduce((result, element) => {
+    if (Array.isArray(element)) {
+      return result.concat(flattenArray(element));
+    } else {
+      return result.concat(element);
+    }
+  }, []);
+}
+
+const nestedArray = [[1], [[2, 3]], [[[4]]]];
+const flattenedArray = flattenArray(nestedArray);
+console.log(flattenedArray);
+```
+А можно пизже!
+
+```javascript
+const a = [[1], [[2, 3]], [[[4]]]];
+const flatten = (arr) => {
+	const arrs = arr.toString().split(',');
+	return arrs;
+}
+console.log(flatten(a)) //[1, 2, 3, 4]
+```
+
+Фишка в том, что метод `toString()` рекурсивно обходит массив и преобразовывает к представлению плоскости, так что не придется писать всякие reduce и так далее
