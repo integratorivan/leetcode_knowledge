@@ -118,3 +118,237 @@ console.log('start2')
 
 ### Какие приоритеты у микро и макро тасок?
 Выполнит сначала все микротаски, и если у нас очередь микротасок пуста, то берется ОДНА задача из макротасок
+
+### Как работает boxing / unboxing в JavaScript?
+
+`Boxing` заключается в оборачивании примитивного типа данных в соответствующий объект-обертку, пример оборачивания строки:
+```javascript
+let str = "Hello, world";
+let boxedStr = new String(str); // <String: "Hello, world">
+```
+
+`Unboxing` - это процесс преобразования объекта обертки обратно в его соответствующий примитивный тип. JavaScript автоматически производит unboxing, когда методы примитивного типа вызываются на объектах-обертках.
+```javascript
+let boxedStr = new String("Hello, world");
+let unboxedStr = boxedStr.valueOf(); // "Hello, world"
+```
+
+### В чем разница между оператором in и методом hasOwnProperty?
+
+Основное различие связано с тем, что in проверяет наличие свойства в объекте или в любом из его прототипов, а hasOwnProperty проверяет только собственные свойства объекта, то есть свойства, которые непосредственно принадлежат данному объекту, но не его прототипу.
+
+```javascript
+let obj = { property: 'value' };
+
+console.log('property' in obj); // true
+console.log(obj.hasOwnProperty('property')); // true
+
+let obj2 = Object.create({ prototypeProperty: 'value' });
+
+console.log('prototypeProperty' in obj2); // true
+console.log(obj2.hasOwnProperty('prototypeProperty')); // false
+```
+
+## с помощью чего в JS реализуются ООП-парадигмы?
+
+**Инкапсуляция**: Это один из основных принципов ООП, который прячет внутренние детали реализации и показывает только то, что необходимо. Это можно выполнить с помощью функций-конструкторов, прототипного наследования, классов (ES6+) и замыканий.
+```javascript
+class Circle {
+  constructor(radius) {
+    this.radius = radius; // публичное свойство
+    let defaultLocation = { x: 0, y: 0 }; // приватное свойство
+    this.getDefaultLocation = function() { // приватный метод
+      return defaultLocation;
+    }
+  }
+
+  draw() {
+    console.log('draw');
+  }
+}
+
+const circle = new Circle(10);
+
+```
+
+**Полиморфизм**: Полиморфизм - это способность объекта использовать методы производного класса, которые ему были унаследованы или переопределены. Это можно выполнить с помощью прототипного наследования или классов ES6+.
+
+```javascript
+class Animal {
+  makeSound() {
+    // ...
+  }
+}
+
+class Dog extends Animal {
+  makeSound() {
+    console.log('Bark');
+  }
+}
+
+class Cat extends Animal {
+  makeSound() {
+    console.log('Meow');
+  }
+}
+
+let pet = new Dog();
+pet.makeSound(); // Bark
+pet = new Cat();
+pet.makeSound(); // Meow
+```
+
+**Абстракция**: Абстракция скрывает сложные детали и показывает только важную информацию. Эта концепция также используется для создания абстрактных классов или методов, которые должны быть реализованы каждым похожим классом. В JavaScript абстрактные классы можно создать с помощью классов ES6+.
+```javascript
+class AbstractClass {
+  constructor() {
+    if (new.target === AbstractClass) {
+      throw new TypeError("Cannot construct AbstractClass instances directly");
+    }
+  }
+
+  abstractMethod() {
+    throw new Error("You have to implement the method doSomething!");
+  }
+}
+
+class ConcreteClass extends AbstractClass {
+  abstractMethod() {
+    console.log("Implements abstract method!");
+  }
+}
+```
+
+**Наследование** - объекты могут наследовать свойства и методы от прототипных объектов. В JavaScript это можно сделать через прототипное наследование:
+
+**Пример наследования на объектах:**
+
+В JavaScript наследование между объектами основано на прототипах. Краткий пример:
+```javascript
+let animal = {
+  eats: true,
+  walk() {
+    console.log('Animal walk');
+  }
+};
+
+let dog = Object.create(animal); // dog refers to animal as its prototype
+dog.barks = true;
+dog.walk(); // output: 'Animal walk'
+console.log(dog.eats); // output: true
+```
+
+В этом примере объект `dog` инстанцируется с использованием `Object.create(animal)`, что создает новый объект `dog`, имеющий `animal` в качестве своего прототипа. Поэтому `dog` унаследовал свойства и методы `animal`.
+
+С появлением ES6 в JavaScript ввели ключевое слово `class` для определения классов. Ключевое слово `extends` используется для того, чтобы сделать наследование классов более явным и более простым для понимания:
+
+```javascript
+class Animal {
+  constructor() {
+    this.eats = true;
+  }
+
+  walk() {
+    console.log('Animal walk');
+  }
+}
+
+class Dog extends Animal {
+  bark() {
+    console.log('Barks');
+  }
+}
+
+let dog = new Dog();
+dog.walk(); // output: 'Animal walk'
+console.log(dog.eats); // output: true
+dog.bark(); // output: 'Barks'
+```
+
+В этом примере `Dog` является подклассом (или производным классом) `Animal` и наследует все его свойства и методы. Кроме того, `Dog` добавляет свой метод - `bark()`.
+
+## Какая разница между композицией и наследованием?
+
+**Наследование**
+
+```javascript
+class Vehicle {
+  constructor(name) {
+    this.name = name;
+  }
+
+  drive() {
+    return `${this.name} drives forward`;
+  }
+}
+
+class Car extends Vehicle {
+  beep() {
+    return `${this.name} beeps`;
+  }
+}
+
+let myCar = new Car("Thunder");
+console.log(myCar.drive()); // "Thunder drives forward"
+console.log(myCar.beep());  // "Thunder beeps"
+```
+
+В этом примере класс `Car` наследует от класса `Vehicle`. Он наследует метод `drive` и добавляет новый метод `beep`.
+
+**Композиция**
+
+```javascript
+const canDrive = {
+  drive() {
+    return `${this.name} drives forward`;
+  }
+};
+
+const canBeep = {
+  beep() {
+    return `${this.name} beeps`;
+  }
+};
+
+function createCar(name) {
+  let car = Object.assign({name: name}, canDrive, canBeep);
+  return car;
+}
+
+let myCar = createCar("Thunder");
+console.log(myCar.drive()); // "Thunder drives forward"
+console.log(myCar.beep());  // "Thunder beeps"
+```
+
+В этом примере вместо того, чтобы наследовать свойства и методы от класса `Vehicle`, мы создаем объект `myCar`, который состоит из отдельных объектов, содержащих особенности или функции. Здесь у нас есть `canDrive` и `canBeep` — объекты, отвечающие за определенные функциональности. Мы соединяем их вместе, чтобы создать `myCar`. Если когда-то мы захотим изменить поведение `myCar`, мы можем просто добавить или удалить компоненты.
+
+## Почему не стоит использовать конструкторы примитивов?
+
+
+Примитивные типы данных в JavaScript, такие как `String`, `Number`, `Boolean`, имеют соответствующие объектные обертки - `String()`, `Number()`, `Boolean()`, которые экземплярируются с использованием ключевого слова `new`.
+Использование таких конструкторов может привести к непредвиденным ошибкам и путанице, поскольку они создают объект, а не примитивное значение.
+
+```javascript
+let primStr = "I am a primitive string";
+let objStr = new String("I am an object string");
+
+console.log(typeof primStr); // "string"
+console.log(typeof objStr);  // "object"
+```
+
+Такой код может делать некоторые проверки усложненными и непредсказуемыми:
+
+```javascript
+if (primStr === "I am a primitive string") {
+  console.log('Works fine'); // 'Works fine'
+}
+
+if (objStr === "I am an object string") {
+  console.log('Works fine');
+} else {
+  console.log('Doesn\'t work'); // 'Doesn't work'
+}
+```
+
+Здесь ветка `if (objStr === "I am an object string")` не выполняется, потому что `objStr` это объект, а не примитивная строка. Это может вызвать путаницу и ошибки. Это одна из причин избегать использования `new String`, `new Number` и `new Boolean`.
+
